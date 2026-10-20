@@ -1,0 +1,113 @@
+body {
+    margin: 0;
+    padding: 10px;
+    font-family: Arial, sans-serif;
+    overflow-x: hidden;
+}
+
+.interface {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.colonne-compteur {
+    width: 42%;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.colonne-onglets {
+    width: 58%;
+    display: flex;
+    flex-direction: column;
+}
+
+.titre {
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+.colonne-compteur button {
+    width: 100%;
+    height: 72px;
+    font-size: 27px;
+    font-weight: bold;
+    border-radius: 12px;
+    border: 1px solid #999;
+    cursor: pointer;
+    touch-action: manipulation;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.plus {
+    background-color: #dff5df;
+}
+
+.moins {
+    background-color: #f5dddd;
+}
+
+#fini {
+    background-color: #d8f0d2;
+    border: 2px solid #555;
+}
+
+#maj {
+    background-color: #fff0b3;
+    border: 2px solid #555;
+}
+
+#annul {
+    background-color: #e4e4e4;
+    border: 2px solid #555;
+}
+
+.colonne-compteur button:active {
+    transform: scale(0.96);
+}
+
+#attente {
+    height: 30px;
+    text-align: center;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+#messageAnnul {
+    height: 25px;
+    text-align: center;
+    font-size: 17px;
+    font-weight: bold;
+}
+
+#onglets {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.bouton-onglet {
+    width: 100%;
+    min-height: 72px;
+    padding: 5px;
+    background-color: #e8eef7;
+    font-size: 20px;
+    font-weight: bold;
+    border-radius: 12px;
+    border: 1px solid #999;
+    cursor: pointer;
+    touch-action: manipulation;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.bouton-onglet:active {
+    transform: scale(0.97);
+}
