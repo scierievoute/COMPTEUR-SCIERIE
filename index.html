@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Compteur Scierie</title>
+
+    <!-- API MICROSOFT OFFICE -->
+    <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
+
+    <!-- NOTRE MISE EN FORME -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+
+<body>
+
+<div class="interface">
+
+    <!-- ==================================================
+         COLONNE GAUCHE
+         ================================================== -->
+
+    <div class="colonne-compteur">
+
+        <div class="titre">
+            QUANTITÉ
+        </div>
+
+
+        <button id="plus1" class="plus">
+            ➕ +1
+        </button>
+
+        <button id="moins1" class="moins">
+            ➖ -1
+        </button>
+
+
+        <button id="plus5" class="plus">
+            ➕ +5
+        </button>
+
+        <button id="moins5" class="moins">
+            ➖ -5
+        </button>
+
+
+        <button id="plus10" class="plus">
+            ➕ +10
+        </button>
+
+        <button id="moins10" class="moins">
+            ➖ -10
+        </button>
+
+
+        <!-- CUMUL VISUEL -->
+
+        <div id="attente"></div>
+
+
+        <!-- FINI -->
+
+        <button id="fini">
+            ✓ FINI
+        </button>
+
+
+        <!-- MAJ -->
+
+        <button id="maj">
+            🔄 MAJ
+        </button>
+
+
+        <!-- ANNULATION -->
+
+        <button id="annul">
+            ↶ ANNUL
+        </button>
+
+
+        <div id="messageAnnul"></div>
+
+    </div>
+
+
+    <!-- ==================================================
+         COLONNE DROITE
+         ================================================== -->
+
+    <div class="colonne-onglets">
+
+        <div class="titre">
+            COMMANDES
+        </div>
+
+        <div id="onglets"></div>
+
+    </div>
+
+</div>
+
+
+<!-- NOTRE PROGRAMME -->
+<script src="script.js"></script>
+
+</body>
+
+</html>
