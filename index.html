@@ -1,115 +1,1287 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
-
 <head>
-    <meta charset="UTF-8">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Compteur Scierie</title>
+<script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
+<style>
+body {
+    margin: 0;
+    padding: 10px;
+    font-family: Arial, sans-serif;
+    overflow-x: hidden;
+}
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
 
-    <title>Compteur Scierie</title>
+/* ==================================================
+   INTERFACE EN DEUX COLONNES
+   ================================================== */
 
-    <!-- API MICROSOFT OFFICE -->
-    <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
+.interface {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    width: 100%;
+    box-sizing: border-box;
+}
 
-    <!-- NOTRE MISE EN FORME -->
-    <link rel="stylesheet" href="style.css">
+
+/* ==================================================
+   COLONNE COMPTEUR
+   ================================================== */
+
+.colonne-compteur {
+    width: 42%;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+
+/* ==================================================
+   COLONNE ONGLETS
+   ================================================== */
+
+.colonne-onglets {
+    width: 58%;
+    display: flex;
+    flex-direction: column;
+}
+
+
+/* ==================================================
+   TITRES
+   ================================================== */
+
+.titre {
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+
+/* ==================================================
+   TOUS LES BOUTONS DE GAUCHE
+   ================================================== */
+
+.colonne-compteur button {
+
+    width: 100%;
+    height: 72px;
+
+    font-size: 27px;
+    font-weight: bold;
+
+    border-radius: 12px;
+    border: 1px solid #999;
+
+    cursor: pointer;
+
+    touch-action: manipulation;
+
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+
+/* ==================================================
+   PLUS
+   ================================================== */
+
+.plus {
+    background-color: #dff5df;
+}
+
+
+/* ==================================================
+   MOINS
+   ================================================== */
+
+.moins {
+    background-color: #f5dddd;
+}
+
+
+/* ==================================================
+   FINI
+   ================================================== */
+
+#fini {
+    background-color: #d8f0d2;
+    border: 2px solid #555;
+}
+
+
+/* ==================================================
+   MAJ
+   ================================================== */
+
+#maj {
+    background-color: #fff0b3;
+    border: 2px solid #555;
+}
+
+
+/* ==================================================
+   ANNUL
+   ================================================== */
+
+#annul {
+    background-color: #e4e4e4;
+    border: 2px solid #555;
+}
+
+
+/* ==================================================
+   EFFET APPUI
+   ================================================== */
+
+.colonne-compteur button:active {
+    transform: scale(0.96);
+}
+
+
+/* ==================================================
+   INDICATEUR DU CUMUL
+   ================================================== */
+
+#attente {
+
+    height: 30px;
+
+    text-align: center;
+
+    font-size: 24px;
+    font-weight: bold;
+}
+
+
+/* ==================================================
+   MESSAGE ANNULATION
+   ================================================== */
+
+#messageAnnul {
+
+    height: 25px;
+
+    text-align: center;
+
+    font-size: 17px;
+    font-weight: bold;
+}
+
+
+/* ==================================================
+   ZONE DES ONGLETS
+   ================================================== */
+
+#onglets {
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 8px;
+}
+
+
+/* ==================================================
+   BOUTONS ONGLETS
+   ================================================== */
+
+.bouton-onglet {
+
+    width: 100%;
+    min-height: 72px;
+
+    padding: 5px;
+
+    background-color: #e8eef7;
+
+    font-size: 20px;
+    font-weight: bold;
+
+    border-radius: 12px;
+    border: 1px solid #999;
+
+    cursor: pointer;
+
+    touch-action: manipulation;
+
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+
+.bouton-onglet:active {
+    transform: scale(0.97);
+}
+
+[hidden] { display: none !important; }
+.reglages { margin-top: 12px; font: 12px Arial, sans-serif; }
+.reglages button { font: inherit; padding: 5px; width: auto; }
+</style>
 </head>
-
-
 <body>
-
 <div class="interface">
 
-    <!-- ==================================================
+	<!-- ==================================================
          COLONNE GAUCHE
          ================================================== -->
 
-    <div class="colonne-compteur">
+	<div class="colonne-compteur">
 
-        <div class="titre">
-            QUANTITÉ
-        </div>
+		<div class="titre">QUANTITÉ</div>
 
 
-        <button id="plus1" class="plus">
+		<!-- COMPTEUR -->
+
+		<button id="plus1" class="plus">
             ➕ +1
         </button>
 
-        <button id="moins1" class="moins">
+		<button id="moins1" class="moins">
             ➖ -1
         </button>
 
 
-        <button id="plus5" class="plus">
+		<button id="plus5" class="plus">
             ➕ +5
         </button>
 
-        <button id="moins5" class="moins">
+		<button id="moins5" class="moins">
             ➖ -5
         </button>
 
 
-        <button id="plus10" class="plus">
+		<button id="plus10" class="plus">
             ➕ +10
         </button>
 
-        <button id="moins10" class="moins">
+		<button id="moins10" class="moins">
             ➖ -10
         </button>
 
 
-        <!-- CUMUL VISUEL -->
+		<!-- CUMUL VISUEL -->
 
-        <div id="attente"></div>
+		<div id="attente"></div>
 
 
-        <!-- FINI -->
+		<!-- FINI -->
 
-        <button id="fini">
+		<button id="fini">
             ✓ FINI
         </button>
 
 
-        <!-- MAJ -->
+		<!-- MAJ -->
 
-        <button id="maj">
+		<button id="maj">
             🔄 MAJ
         </button>
 
 
-        <!-- ANNULATION -->
+		<!-- ANNULATION -->
 
-        <button id="annul">
+		<button id="annul">
             ↶ ANNUL
         </button>
 
 
-        <div id="messageAnnul"></div>
+		<!-- MESSAGE ANNULATION -->
 
-    </div>
+		<div id="messageAnnul"></div>
+
+	</div>
 
 
-    <!-- ==================================================
-         COLONNE DROITE
+	<!-- ==================================================
+         COLONNE DROITE : ONGLETS
          ================================================== -->
 
-    <div class="colonne-onglets">
+	<div class="colonne-onglets">
 
-        <div class="titre">
-            COMMANDES
-        </div>
+		<div class="titre">
+			COMMANDES
+		</div>
 
-        <div id="onglets"></div>
+		<div id="onglets"></div>
 
-    </div>
+	</div>
 
 </div>
+<div class="reglages">
+  <button id="autoopen" type="button" hidden>Activer l’ouverture automatique</button>
+  <span id="autoopen-status" role="status"></span>
+  <div>Version MAJ en-têtes · 16/11/2026</div>
+</div>
+<script>
+
+Office.onReady((info) => {
+  const status = document.getElementById("autoopen-status");
+  if (info.host !== Office.HostType.Excel) {
+    status.textContent = "Ouvrir cette page depuis le complément Excel.";
+    document.querySelector(".interface").hidden = true;
+    return;
+  }
+
+  const key = "Office.AutoShowTaskpaneWithDocument";
+  const settings = Office.context.document.settings;
+  const button = document.getElementById("autoopen");
+  function actualiserBouton() {
+    button.textContent = settings.get(key) === true
+      ? "Désactiver l’ouverture automatique"
+      : "Activer l’ouverture automatique";
+  }
+  actualiserBouton();
+  button.hidden = false;
+  button.addEventListener("click", () => {
+    const avant = settings.get(key) === true;
+    button.disabled = true;
+    settings.set(key, !avant);
+    settings.saveAsync((result) => {
+      button.disabled = false;
+      if (result.status === Office.AsyncResultStatus.Succeeded) {
+        status.textContent = avant
+          ? "Ouverture automatique désactivée pour ce classeur."
+          : "Ouverture automatique activée pour ce classeur.";
+      } else {
+        settings.set(key, avant);
+        status.textContent = "Enregistrement impossible. " + result.error.message;
+      }
+      actualiserBouton();
+    });
+  });
+  // ==================================================
+  // COMPTEUR SCIERIE
+  // VERSION RAPIDE + FINI + MAJ + ANNUL
+  // ==================================================
 
 
-<!-- NOTRE PROGRAMME -->
-<script src="script.js"></script>
+  // ==================================================
+  // VARIABLES COMPTEUR
+  // ==================================================
 
+  let changementEnAttente = 0;
+
+  let cumulVisuel = 0;
+
+  let timerModification = null;
+
+  let timerEffacementAffichage = null;
+
+  let ecritureEnCours = false;
+
+
+  // ==================================================
+  // MÉMOIRE DE LA DERNIÈRE ACTION
+  // ==================================================
+
+  let derniereAction = null;
+
+
+  // ==================================================
+  // BOUTONS COMPTEUR
+  // ==================================================
+
+  document.getElementById("plus1").addEventListener(
+    "click",
+    () => ajouterModification(1)
+  );
+
+  document.getElementById("moins1").addEventListener(
+    "click",
+    () => ajouterModification(-1)
+  );
+
+  document.getElementById("plus5").addEventListener(
+    "click",
+    () => ajouterModification(5)
+  );
+
+  document.getElementById("moins5").addEventListener(
+    "click",
+    () => ajouterModification(-5)
+  );
+
+  document.getElementById("plus10").addEventListener(
+    "click",
+    () => ajouterModification(10)
+  );
+
+  document.getElementById("moins10").addEventListener(
+    "click",
+    () => ajouterModification(-10)
+  );
+
+
+  // ==================================================
+  // AUTRES BOUTONS
+  // ==================================================
+
+  document.getElementById("fini").addEventListener(
+    "click",
+    () => basculerFini()
+  );
+
+  document.getElementById("maj").addEventListener(
+    "click",
+    () => miseAJour()
+  );
+
+  document.getElementById("annul").addEventListener(
+    "click",
+    () => annulerDerniereAction()
+  );
+
+
+  // ==================================================
+  // AJOUT D'UNE MODIFICATION
+  // ==================================================
+
+  function ajouterModification(changement) {
+
+    // Ajout dans la file d'attente
+    changementEnAttente += changement;
+
+
+    // Cumul visuel
+    cumulVisuel += changement;
+
+    afficherCumul();
+
+
+    // ==================================================
+    // EFFACEMENT DU CUMUL APRÈS 3 SECONDES
+    // ==================================================
+
+    if (timerEffacementAffichage !== null) {
+
+      clearTimeout(
+        timerEffacementAffichage
+      );
+    }
+
+
+    timerEffacementAffichage =
+      setTimeout(() => {
+
+        cumulVisuel = 0;
+
+        const zone =
+          document.getElementById("attente");
+
+        zone.textContent = "";
+
+        timerEffacementAffichage = null;
+
+      }, 3000);
+
+
+    // ==================================================
+    // REGROUPEMENT DES CLICS
+    // ==================================================
+
+    if (timerModification !== null) {
+
+      clearTimeout(
+        timerModification
+      );
+    }
+
+
+    timerModification =
+      setTimeout(() => {
+
+        timerModification = null;
+
+        traiterModifications();
+
+      }, 120);
+  }
+
+
+  // ==================================================
+  // AFFICHAGE DU CUMUL
+  // ==================================================
+
+  function afficherCumul() {
+
+    const zone =
+      document.getElementById("attente");
+
+
+    if (cumulVisuel > 0) {
+
+      zone.textContent =
+        "+" + cumulVisuel;
+
+    }
+
+    else if (cumulVisuel < 0) {
+
+      zone.textContent =
+        cumulVisuel.toString();
+
+    }
+
+    else {
+
+      zone.textContent = "0";
+
+    }
+  }
+
+
+  // ==================================================
+  // TRAITEMENT DES MODIFICATIONS EXCEL
+  // ==================================================
+
+  async function traiterModifications() {
+
+    if (ecritureEnCours) {
+      return;
+    }
+
+
+    if (changementEnAttente === 0) {
+      return;
+    }
+
+
+    ecritureEnCours = true;
+
+
+    // Groupe de clics à appliquer
+    const changement =
+      changementEnAttente;
+
+
+    changementEnAttente = 0;
+
+
+    try {
+
+      await Excel.run(
+        async (context) => {
+
+
+          // Cellule sélectionnée
+          const cellule =
+            context.workbook
+              .getSelectedRange();
+
+
+          cellule.load([
+            "values",
+            "address"
+          ]);
+
+
+          // Feuille active
+          const feuille =
+            context.workbook
+              .worksheets
+              .getActiveWorksheet();
+
+
+          feuille.load("name");
+
+
+          await context.sync();
+
+
+          // Valeur actuelle
+          let valeur =
+            cellule.values[0][0];
+
+
+          if (
+            valeur === "" ||
+            valeur === null
+          ) {
+
+            valeur = 0;
+
+          }
+
+
+          valeur =
+            Number(valeur);
+
+
+          if (!isNaN(valeur)) {
+
+
+            // ==================================================
+            // MÉMORISATION POUR ANNUL
+            // ==================================================
+
+            derniereAction = {
+
+              type: "quantite",
+
+              feuille:
+                feuille.name,
+
+              adresse:
+                cellule.address,
+
+              ancienneValeur:
+                valeur
+
+            };
+
+
+            // ==================================================
+            // NOUVELLE VALEUR
+            // ==================================================
+
+            cellule.values = [
+              [
+                valeur + changement
+              ]
+            ];
+
+
+            await context.sync();
+
+          }
+
+        }
+      );
+
+    }
+
+    catch (erreur) {
+
+      console.log(
+        "Erreur compteur :",
+        erreur
+      );
+
+
+      // Remet les clics en attente
+      changementEnAttente +=
+        changement;
+
+    }
+
+    finally {
+
+      ecritureEnCours = false;
+
+
+      // Si d'autres clics sont arrivés
+      // pendant l'écriture
+
+      if (
+        changementEnAttente !== 0
+      ) {
+
+        setTimeout(
+          () => {
+
+            traiterModifications();
+
+          },
+          20
+        );
+
+      }
+
+    }
+
+  }
+
+
+  // ==================================================
+  // BOUTON FINI
+  //
+  // BARRE B C D E DE LA LIGNE SÉLECTIONNÉE
+  // ==================================================
+
+  async function basculerFini() {
+
+    try {
+
+      await Excel.run(
+        async (context) => {
+
+
+          // Sélection actuelle
+          const selection =
+            context.workbook
+              .getSelectedRange();
+
+
+          selection.load(
+            "rowIndex"
+          );
+
+
+          // Feuille active
+          const feuille =
+            context.workbook
+              .worksheets
+              .getActiveWorksheet();
+
+
+          feuille.load("name");
+
+
+          await context.sync();
+
+
+          // Numéro de ligne Excel
+          const numeroLigne =
+            selection.rowIndex + 1;
+
+
+          // ==================================================
+          // B À E DE LA LIGNE
+          // ==================================================
+
+          const adresse =
+            "B" +
+            numeroLigne +
+            ":E" +
+            numeroLigne;
+
+
+          const zone =
+            feuille.getRange(
+              adresse
+            );
+
+
+          zone.format.font.load(
+            "strikethrough"
+          );
+
+
+          await context.sync();
+
+
+          // État avant modification
+          const ancienEtat =
+            zone.format.font
+              .strikethrough === true;
+
+
+          // ==================================================
+          // MÉMORISATION POUR ANNUL
+          // ==================================================
+
+          derniereAction = {
+
+            type: "fini",
+
+            feuille:
+              feuille.name,
+
+            adresse:
+              adresse,
+
+            ancienEtat:
+              ancienEtat
+
+          };
+
+
+          // ==================================================
+          // BARRE / DÉBARRE
+          // ==================================================
+
+          zone.format.font
+            .strikethrough =
+            !ancienEtat;
+
+
+          await context.sync();
+
+        }
+      );
+
+    }
+
+    catch (erreur) {
+
+      console.log(
+        "Erreur bouton FINI :",
+        erreur
+      );
+
+    }
+
+  }
+
+
+  // ==================================================
+  // BOUTON MAJ : efface les cellules sous les en-têtes de la ligne sélectionnée.
+  async function miseAJour() {
+    const noms = new Set(["BZH", "PORTE", "DELI", "DELIGNEU"]);
+    const estEntete = (valeur) =>
+      noms.has(String(valeur).trim().toUpperCase());
+
+    try {
+      await Excel.run(async (context) => {
+        const selection = context.workbook.getSelectedRange();
+        const feuille = context.workbook.worksheets.getActiveWorksheet();
+        const zoneUtilisee = feuille.getUsedRange(true);
+        selection.load("rowIndex,rowCount");
+        feuille.load("name");
+        zoneUtilisee.load("rowIndex,columnIndex,columnCount");
+        await context.sync();
+
+        const ligne = selection.rowIndex;
+        if (selection.rowCount !== 1 || ligne <= zoneUtilisee.rowIndex) {
+          afficherMessageAnnul("MAJ : sélectionner une ligne de production");
+          return;
+        }
+
+        const zoneRecherche = feuille.getRangeByIndexes(
+          zoneUtilisee.rowIndex, zoneUtilisee.columnIndex,
+          ligne - zoneUtilisee.rowIndex + 1, zoneUtilisee.columnCount
+        );
+        zoneRecherche.load("values");
+        await context.sync();
+
+        const lignes = zoneRecherche.values;
+        const ligneEntetes = lignes.slice().reverse().find(
+          (valeurs) => valeurs.some(estEntete)
+        );
+        if (!ligneEntetes || ligneEntetes === lignes[lignes.length - 1]) {
+          afficherMessageAnnul("MAJ : aucun en-tête trouvé au-dessus de la sélection");
+          return;
+        }
+
+        const cellules = [];
+        const nomsTrouves = new Set();
+        for (let colonne = 0; colonne < ligneEntetes.length; colonne++) {
+          const nom = String(ligneEntetes[colonne]).trim().toUpperCase();
+          if (!noms.has(nom)) continue;
+          if (nomsTrouves.has(nom)) {
+            afficherMessageAnnul("MAJ : en-tête en double (" + nom + ")");
+            return;
+          }
+          nomsTrouves.add(nom);
+          cellules.push(feuille.getRangeByIndexes(
+            ligne, zoneUtilisee.columnIndex + colonne, 1, 1
+          ));
+        }
+
+        cellules.forEach((cellule) => cellule.load("columnIndex,formulas"));
+        await context.sync();
+        const contenus = cellules.map((cellule) => ({
+          colonne: cellule.columnIndex,
+          formuleOuValeur: cellule.formulas[0][0]
+        }));
+
+        cellules.forEach((cellule) => cellule.clear("Contents"));
+        await context.sync();
+        derniereAction = { type: "maj", feuille: feuille.name, ligne, contenus };
+      });
+    } catch (erreur) {
+      console.log("Erreur bouton MAJ :", erreur);
+      afficherMessageAnnul("MAJ : erreur Excel");
+    }
+  }
+
+
+  // ==================================================
+  // BOUTON ANNUL
+  //
+  // ANNULE LA DERNIÈRE ACTION
+  // EFFECTUÉE AVEC NOTRE PANNEAU
+  // ==================================================
+
+  async function annulerDerniereAction() {
+
+
+    // ==================================================
+    // RIEN À ANNULER
+    // ==================================================
+
+    if (
+      derniereAction === null
+    ) {
+
+      afficherMessageAnnul(
+        "RIEN À ANNULER"
+      );
+
+      return;
+
+    }
+
+
+    // Action à annuler
+    const action =
+      derniereAction;
+
+
+    try {
+
+      await Excel.run(
+        async (context) => {
+
+
+          // ==================================================
+          // RÉCUPÈRE LA BONNE FEUILLE
+          // ==================================================
+
+          const feuille =
+            context.workbook
+              .worksheets
+              .getItem(
+                action.feuille
+              );
+
+
+          // ==================================================
+          // ANNULATION QUANTITÉ
+          // ==================================================
+
+          if (
+            action.type ===
+            "quantite"
+          ) {
+
+            const cellule =
+              feuille.getRange(
+                action.adresse
+              );
+
+
+            cellule.values = [
+              [
+                action.ancienneValeur
+              ]
+            ];
+
+          }
+
+
+          // ==================================================
+          // ANNULATION FINI
+          // ==================================================
+
+          else if (
+            action.type ===
+            "fini"
+          ) {
+
+            const zone =
+              feuille.getRange(
+                action.adresse
+              );
+
+
+            zone.format.font
+              .strikethrough =
+              action.ancienEtat;
+
+          }
+
+
+          // ==================================================
+          // ANNULATION MAJ
+          // ==================================================
+
+          else if (
+            action.type ===
+            "maj"
+          ) {
+
+            for (const contenu of action.contenus) {
+              const cellule = feuille.getRangeByIndexes(
+                action.ligne, contenu.colonne, 1, 1
+              );
+              cellule.formulas = [[contenu.formuleOuValeur]];
+            }
+
+          }
+
+
+          await context.sync();
+
+
+          // ==================================================
+          // ACTION ANNULÉE
+          // ==================================================
+
+          derniereAction = null;
+
+
+          afficherMessageAnnul(
+            "ANNULÉ ✓"
+          );
+
+        }
+      );
+
+    }
+
+    catch (erreur) {
+
+      console.log(
+        "Erreur bouton ANNUL :",
+        erreur
+      );
+
+
+      afficherMessageAnnul(
+        "ERREUR"
+      );
+
+    }
+
+  }
+
+
+  // ==================================================
+  // MESSAGE VISUEL ANNUL
+  // ==================================================
+
+  function afficherMessageAnnul(
+    message
+  ) {
+
+    const zone =
+      document.getElementById(
+        "messageAnnul"
+      );
+
+
+    zone.textContent =
+      message;
+
+
+    setTimeout(
+      () => {
+
+        if (
+          zone.textContent ===
+          message
+        ) {
+
+          zone.textContent = "";
+
+        }
+
+      },
+      2000
+    );
+
+  }
+
+
+  // ==================================================
+  // GESTION AUTOMATIQUE DES ONGLETS
+  // ==================================================
+
+  let derniereListeOnglets = "";
+
+  let verificationEnCours = false;
+
+
+  // ==================================================
+  // VÉRIFICATION DES ONGLETS
+  // ==================================================
+
+  async function verifierOnglets() {
+
+    if (verificationEnCours) {
+      return;
+    }
+
+
+    verificationEnCours = true;
+
+
+    try {
+
+      await Excel.run(
+        async (context) => {
+
+
+          const feuilles =
+            context.workbook
+              .worksheets;
+
+
+          feuilles.load(
+            "items/name"
+          );
+
+
+          await context.sync();
+
+
+          const noms =
+            feuilles.items.map(
+              feuille =>
+                feuille.name
+            );
+
+
+          const nouvelleListe =
+            JSON.stringify(
+              noms
+            );
+
+
+          // ==================================================
+          // RECRÉE LES BOUTONS UNIQUEMENT
+          // SI LES ONGLETS ONT CHANGÉ
+          // ==================================================
+
+          if (
+            nouvelleListe !==
+            derniereListeOnglets
+          ) {
+
+            derniereListeOnglets =
+              nouvelleListe;
+
+
+            const zone =
+              document.getElementById(
+                "onglets"
+              );
+
+
+            zone.innerHTML = "";
+
+
+            noms.forEach(
+              (nom) => {
+
+
+                const bouton =
+                  document.createElement(
+                    "button"
+                  );
+
+
+                bouton.textContent =
+                  nom;
+
+
+                bouton.className =
+                  "bouton-onglet";
+
+
+                bouton.addEventListener(
+                  "click",
+                  async () => {
+
+                    await ouvrirOnglet(
+                      nom
+                    );
+
+                  }
+                );
+
+
+                zone.appendChild(
+                  bouton
+                );
+
+              }
+            );
+
+          }
+
+        }
+      );
+
+    }
+
+    catch (erreur) {
+
+      console.log(
+        "Erreur vérification des onglets :",
+        erreur
+      );
+
+    }
+
+    finally {
+
+      verificationEnCours = false;
+
+    }
+
+  }
+
+
+  // ==================================================
+  // OUVERTURE D'UN ONGLET
+  // ==================================================
+
+  async function ouvrirOnglet(
+    nomOnglet
+  ) {
+
+    try {
+
+      await Excel.run(
+        async (context) => {
+
+
+          const feuille =
+            context.workbook
+              .worksheets
+              .getItem(
+                nomOnglet
+              );
+
+
+          feuille.activate();
+
+
+          await context.sync();
+
+        }
+      );
+
+    }
+
+    catch (erreur) {
+
+      console.log(
+        "Erreur ouverture onglet :",
+        erreur
+      );
+
+    }
+
+  }
+
+
+  // ==================================================
+  // DÉMARRAGE
+  // ==================================================
+
+  verifierOnglets();
+
+
+  // ==================================================
+  // ACTUALISATION AUTOMATIQUE DES ONGLETS
+  // TOUTES LES 30 SECONDES
+  // ==================================================
+
+  setInterval(
+    verifierOnglets,
+    30000
+  );
+
+});
+
+</script>
 </body>
-
 </html>
