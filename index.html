@@ -224,98 +224,98 @@ body {
 </style>
 </head>
 <body>
-<div class="interface">
-
-	<!-- ==================================================
-         COLONNE GAUCHE
-         ================================================== -->
-
-	<div class="colonne-compteur">
-
-		<div class="titre">QUANTITÉ</div>
-
-
-		<!-- COMPTEUR -->
-
-		<button id="plus1" class="plus">
-            ➕ +1
-        </button>
-
-		<button id="moins1" class="moins">
-            ➖ -1
-        </button>
-
-
-		<button id="plus5" class="plus">
-            ➕ +5
-        </button>
-
-		<button id="moins5" class="moins">
-            ➖ -5
-        </button>
-
-
-		<button id="plus10" class="plus">
-            ➕ +10
-        </button>
-
-		<button id="moins10" class="moins">
-            ➖ -10
-        </button>
-
-
-		<!-- CUMUL VISUEL -->
-
-		<div id="attente"></div>
-
-
-		<!-- FINI -->
-
-		<button id="fini">
-            ✓ FINI
-        </button>
-
-
-		<!-- MAJ -->
-
-		<button id="maj">
-            🔄 MAJ
-        </button>
-
-
-		<!-- ANNULATION -->
-
-		<button id="annul">
-            ↶ ANNUL
-        </button>
-
-
-		<!-- MESSAGE ANNULATION -->
-
-		<div id="messageAnnul"></div>
-
-	</div>
-
-
-	<!-- ==================================================
-         COLONNE DROITE : ONGLETS
-         ================================================== -->
-
-	<div class="colonne-onglets">
-
-		<div class="titre">
-			COMMANDES
-		</div>
-
-		<div id="onglets"></div>
-
-	</div>
-
+<div class="interface">
+
+	<!-- ==================================================
+         COLONNE GAUCHE
+         ================================================== -->
+
+	<div class="colonne-compteur">
+
+		<div class="titre">QUANTITÉ</div>
+
+
+		<!-- COMPTEUR -->
+
+		<button id="plus1" class="plus">
+            ➕ +1
+        </button>
+
+		<button id="moins1" class="moins">
+            ➖ -1
+        </button>
+
+
+		<button id="plus5" class="plus">
+            ➕ +5
+        </button>
+
+		<button id="moins5" class="moins">
+            ➖ -5
+        </button>
+
+
+		<button id="plus10" class="plus">
+            ➕ +10
+        </button>
+
+		<button id="moins10" class="moins">
+            ➖ -10
+        </button>
+
+
+		<!-- CUMUL VISUEL -->
+
+		<div id="attente"></div>
+
+
+		<!-- FINI -->
+
+		<button id="fini">
+            ✓ FINI
+        </button>
+
+
+		<!-- MAJ -->
+
+		<button id="maj">
+            🔄 MAJ
+        </button>
+
+
+		<!-- ANNULATION -->
+
+		<button id="annul">
+            ↶ ANNUL
+        </button>
+
+
+		<!-- MESSAGE ANNULATION -->
+
+		<div id="messageAnnul"></div>
+
+	</div>
+
+
+	<!-- ==================================================
+         COLONNE DROITE : ONGLETS
+         ================================================== -->
+
+	<div class="colonne-onglets">
+
+		<div class="titre">
+			COMMANDES
+		</div>
+
+		<div id="onglets"></div>
+
+	</div>
+
 </div>
 <div class="reglages">
   <button id="autoopen" type="button" hidden>Activer l’ouverture automatique</button>
   <span id="autoopen-status" role="status"></span>
-  <div>Essai FINI · traits épais LG / LARG / EPAI</div>
+  <div>Essai FINI · traits épais LG / LARG / EPAI / NB</div>
 </div>
 <script>
 
@@ -714,7 +714,7 @@ Office.onReady((info) => {
   }
 
   async function basculerFini() {
-    const noms = new Set(["LG", "LARG", "EPAI"]);
+    const noms = new Set(["LG", "LARG", "EPAI", "NB"]);
     const normaliser = (valeur) => String(valeur).trim().toUpperCase();
     try {
       if (!Office.context.requirements.isSetSupported("ExcelApi", "1.10")) {
