@@ -315,7 +315,7 @@ body {
 <div class="reglages">
   <button id="autoopen" type="button" hidden>Activer l’ouverture automatique</button>
   <span id="autoopen-status" role="status"></span>
-  <div>Version MAJ en-têtes · 16/11/2026</div>
+  <div>Essai FINI · traits épais LG / LARG / EPAI</div>
 </div>
 <script>
 
@@ -703,123 +703,108 @@ Office.onReady((info) => {
   // BARRE B C D E DE LA LIGNE SÉLECTIONNÉE
   // ==================================================
 
-  async function basculerFini() {
+  const prefixeTraitFini = "CompteurScierie_Fini_";
 
-    try {
-
-      await Excel.run(
-        async (context) => {
-
-
-          // Sélection actuelle
-          const selection =
-            context.workbook
-              .getSelectedRange();
-
-
-          selection.load(
-            "rowIndex"
-          );
-
-
-          // Feuille active
-          const feuille =
-            context.workbook
-              .worksheets
-              .getActiveWorksheet();
-
-
-          feuille.load("name");
-
-
-          await context.sync();
-
-
-          // Numéro de ligne Excel
-          const numeroLigne =
-            selection.rowIndex + 1;
-
-
-          // ==================================================
-          // B À E DE LA LIGNE
-          // ==================================================
-
-          const adresse =
-            "B" +
-            numeroLigne +
-            ":E" +
-            numeroLigne;
-
-
-          const zone =
-            feuille.getRange(
-              adresse
-            );
-
-
-          zone.format.font.load(
-            "strikethrough"
-          );
-
-
-          await context.sync();
-
-
-          // État avant modification
-          const ancienEtat =
-            zone.format.font
-              .strikethrough === true;
-
-
-          // ==================================================
-          // MÉMORISATION POUR ANNUL
-          // ==================================================
-
-          derniereAction = {
-
-            type: "fini",
-
-            feuille:
-              feuille.name,
-
-            adresse:
-              adresse,
-
-            ancienEtat:
-              ancienEtat
-
-          };
-
-
-          // ==================================================
-          // BARRE / DÉBARRE
-          // ==================================================
-
-          zone.format.font
-            .strikethrough =
-            !ancienEtat;
-
-
-          await context.sync();
-
-        }
-      );
-
-    }
-
-    catch (erreur) {
-
-      console.log(
-        "Erreur bouton FINI :",
-        erreur
-      );
-
-    }
-
+  function ajouterTraitFini(feuille, trait) {
+    const forme = feuille.shapes.addLine(trait.gauche, trait.y, trait.droite, trait.y);
+    forme.name = trait.nom;
+    forme.placement = "TwoCell";
+    forme.lineFormat.color = "#000000";
+    forme.lineFormat.weight = 3;
   }
 
+  async function basculerFini() {
+    const noms = new Set(["LG", "LARG", "EPAI"]);
+    const normaliser = (valeur) => String(valeur).trim().toUpperCase();
+    try {
+      if (!Office.context.requirements.isSetSupported("ExcelApi", "1.10")) {
+        afficherMessageAnnul("FINI : formes indisponibles dans cette version d’Excel");
+        return;
+      }
+      await Excel.run(async (context) => {
+        const selection = context.workbook.getSelectedRange();
+        const feuille = context.workbook.worksheets.getActiveWorksheet();
+        const utilisee = feuille.getUsedRange(true);
+        selection.load("rowIndex,rowCount,top,height");
+        feuille.load("name");
+        utilisee.load("rowIndex,columnIndex,columnCount");
+        await context.sync();
 
-  // ==================================================
+        const ligne = selection.rowIndex;
+        if (selection.rowCount !== 1 || ligne <= utilisee.rowIndex || selection.height <= 0) {
+          afficherMessageAnnul("FINI : sélectionner une ligne de production");
+          return;
+        }
+        const zone = feuille.getRangeByIndexes(
+          utilisee.rowIndex, utilisee.columnIndex, ligne - utilisee.rowIndex + 1,
+          utilisee.columnCount
+        );
+        zone.load("values");
+        await context.sync();
+
+        const donnees = zone.values[zone.values.length - 1];
+        const entetes = zone.values.slice().reverse().find(
+          (valeurs) => valeurs.some((valeur) => noms.has(normaliser(valeur)))
+        );
+        if (!entetes || entetes === donnees) {
+          afficherMessageAnnul("FINI : aucun en-tête de dimension au-dessus");
+          return;
+        }
+        const nomsVus = new Set();
+        const cellules = [];
+        for (let c = 0; c < entetes.length; c++) {
+          const nom = normaliser(entetes[c]);
+          if (!noms.has(nom)) continue;
+          if (nomsVus.has(nom)) {
+            afficherMessageAnnul("FINI : en-tête en double (" + nom + ")");
+            return;
+          }
+          nomsVus.add(nom);
+          if (String(donnees[c] ?? "").trim() !== "") {
+            const cellule = feuille.getRangeByIndexes(ligne, utilisee.columnIndex + c, 1, 1);
+            cellule.load("left,width");
+            cellules.push(cellule);
+          }
+        }
+
+        feuille.shapes.load("items/name,items/top,items/left,items/width");
+        await context.sync();
+        const formes = feuille.shapes.items.filter((forme) =>
+          forme.name.startsWith(prefixeTraitFini) &&
+          forme.top >= selection.top &&
+          forme.top < selection.top + selection.height
+        );
+        if (formes.length > 0) {
+          const traits = formes.map((forme) => ({
+            nom: forme.name, gauche: forme.left, droite: forme.left + forme.width, y: forme.top
+          }));
+          formes.forEach((forme) => forme.delete());
+          await context.sync();
+          derniereAction = { type: "fini", feuille: feuille.name, ajout: false, traits };
+          return;
+        }
+
+        const id = crypto.randomUUID();
+        const traits = cellules.filter((cellule) => cellule.width > 2).map((cellule, index) => ({
+          nom: prefixeTraitFini + id + "_" + index,
+          gauche: cellule.left + 1,
+          droite: cellule.left + cellule.width - 1,
+          y: selection.top + selection.height / 2
+        }));
+        if (traits.length === 0) {
+          afficherMessageAnnul("FINI : aucune dimension visible à barrer");
+          return;
+        }
+        traits.forEach((trait) => ajouterTraitFini(feuille, trait));
+        await context.sync();
+        derniereAction = { type: "fini", feuille: feuille.name, ajout: true, traits };
+      });
+    } catch (erreur) {
+      console.log("Erreur bouton FINI :", erreur);
+      afficherMessageAnnul("FINI : erreur Excel");
+    }
+  }
+
   // BOUTON MAJ : efface les cellules sous les en-têtes de la ligne sélectionnée.
   async function miseAJour() {
     const noms = new Set(["BZH", "PORTE", "DELI", "DELIGNEU"]);
@@ -973,17 +958,15 @@ Office.onReady((info) => {
             action.type ===
             "fini"
           ) {
-
-            const zone =
-              feuille.getRange(
-                action.adresse
-              );
-
-
-            zone.format.font
-              .strikethrough =
-              action.ancienEtat;
-
+            if (action.ajout) {
+              const noms = new Set(action.traits.map((trait) => trait.nom));
+              feuille.shapes.load("items/name");
+              await context.sync();
+              feuille.shapes.items.filter((forme) => noms.has(forme.name))
+                .forEach((forme) => forme.delete());
+            } else {
+              action.traits.forEach((trait) => ajouterTraitFini(feuille, trait));
+            }
           }
 
 
